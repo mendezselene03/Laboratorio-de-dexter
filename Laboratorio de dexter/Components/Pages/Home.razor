@@ -1,0 +1,327 @@
+﻿@* Unidad 2:Responsive con Bootstrap 5 (mobile-first)
+Cumplido: Uso de clases semánticas de Bootstrap  *@
+
+
+
+@* CSS Isolation (al menos 3 componentes)
+En proceso:Home.razor.css adjunto a Home.razor. 
+Para completar el 100%, solo te faltaría agregar dos archivos 
+.razor.css más 
+(por ejemplo, AdminConsultas.razor.css y NotebooksService.razor.css). *@
+
+
+
+
+
+@page "/"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<AppDbContext> DbFactory
+
+<style>
+    body {
+        background-color: #000 !important;
+        color: #f8f9fa !important;
+    }
+</style>
+
+<PageTitle>Dexter | Servicio Técnico Multimarca - Alejandro Korn</PageTitle>
+
+<div class="container mt-4 pb-5">
+    <header class="text-center mb-4">
+        <h1 class="display-2 fw-bold mb-0">DEXTER</h1>
+        <p class="fs-4 text-uppercase text-primary" style="letter-spacing: 2px;">Servicio Técnico Multimarca</p>
+
+        <!-- REDES SOCIALES EN ENCABEZADO -->
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <a href="@ObtenerUrlWhatsApp()" target="_blank" class="btn btn-outline-success rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" title="WhatsApp">
+                <i class="bi bi-whatsapp fs-5"></i>
+            </a>
+            <a href="https://instagram.com/laboratorio.dexter" target="_blank" class="btn btn-outline-danger rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" title="Instagram">
+                <i class="bi bi-instagram fs-5"></i>
+            </a>
+            <a href="https://facebook.com/laboratorio.dexter" target="_blank" class="btn btn-outline-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;" title="Facebook">
+                <i class="bi bi-facebook fs-5"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- PORTADA CON IMAGEN foto1.jpg -->
+    <div class="hero-section shadow-lg" style="background-image: url('img/foto1.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 400px; border-radius: 15px;"></div>
+
+    @* --- POR QUÉ ELEGIRNOS --- *@
+    <div class="row g-4 mb-5 mt-2">
+        <div class="col-md-4">
+            <div class="info-card text-center">
+                <i class="bi bi-shield-check icon-style text-success"></i>
+                <h5 class="text-white">Garantía Escrita</h5>
+                <p class="text-secondary small">Respaldo post-entrega en cada trabajo.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="info-card text-center">
+                <i class="bi bi-cpu icon-style"></i>
+                <h5 class="text-white">Repuestos Calidad</h5>
+                <p class="text-secondary small">Componentes originales o premium.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="info-card text-center">
+                <i class="bi bi-cash-coin icon-style text-warning"></i>
+                <h5 class="text-white">Presupuesto Justo</h5>
+                <p class="text-secondary small">Diagnóstico honesto sin vueltas.</p>
+            </div>
+        </div>
+    </div>
+
+    @* --- ESPECIALIDADES --- *@
+    <h3 class="section-title">Especialidades</h3>
+    <div class="row g-3 mb-5">
+        <!-- TV -->
+        <div class="col-6 col-md-3">
+            <NavLink href="servicios/tv" class="text-decoration-none">
+                <div class="info-card d-flex flex-column align-items-center justify-content-center p-3 h-100">
+                    <i class="bi bi-tv-fill icon-style text-primary mb-2 fs-1"></i>
+                    <h6 class="text-white fw-bold mb-1">TV</h6>
+                    <span class="text-secondary small">Backlight y Placas</span>
+                </div>
+            </NavLink>
+        </div>
+
+        <!-- NOTEBOOKS -->
+        <div class="col-6 col-md-3">
+            <NavLink href="servicios/notebooks" class="text-decoration-none">
+                <div class="info-card d-flex flex-column align-items-center justify-content-center p-3 h-100">
+                    <i class="bi bi-laptop-fill icon-style text-primary mb-2 fs-1"></i>
+                    <h6 class="text-white fw-bold mb-1">NOTEBOOKS</h6>
+                    <span class="text-secondary small">Hardware y Software</span>
+                </div>
+            </NavLink>
+        </div>
+
+        <!-- CONSOLAS -->
+        <div class="col-6 col-md-3">
+            <NavLink href="servicios/consolas" class="text-decoration-none">
+                <div class="info-card d-flex flex-column align-items-center justify-content-center p-3 h-100">
+                    <i class="bi bi-controller icon-style text-primary mb-2 fs-1"></i>
+                    <h6 class="text-white fw-bold mb-1">CONSOLAS</h6>
+                    <span class="text-secondary small">PS4, PS5, Xbox, Switch</span>
+                </div>
+            </NavLink>
+        </div>
+
+        <!-- CELULARES -->
+        <div class="col-6 col-md-3">
+            <NavLink href="servicios/celulares" class="text-decoration-none">
+                <div class="info-card d-flex flex-column align-items-center justify-content-center p-3 h-100">
+                    <i class="bi bi-phone-fill icon-style text-primary mb-2 fs-1"></i>
+                    <h6 class="text-white fw-bold mb-1">CELULARES</h6>
+                    <span class="text-secondary small">Módulos y Placas</span>
+                </div>
+            </NavLink>
+        </div>
+    </div>
+
+    @* --- FORMULARIO --- *@
+    <div class="row g-5 mb-5">
+        @* FORMULARIO DINÁMICO DE CONSULTA *@
+        <div class="col-lg-6">
+            <h3 class="section-title mt-0">Envianos tu consulta</h3>
+            <div class="card p-4 shadow-sm" style="background-color: #111; border: 1px solid #222;">
+                <div class="mb-3">
+                    <label class="form-label text-secondary small">Nombre y Apellido</label>
+                    <input type="text" @bind="clienteNombre" @bind:event="oninput" class="form-control bg-dark border-secondary text-white" placeholder="Ej: Juan Pérez">
+                    @if (!string.IsNullOrEmpty(errorNombre))
+                    {
+                        <span class="text-danger small mt-1 d-block">@errorNombre</span>
+                    }
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-secondary small">Equipo (Modelo)</label>
+                    <input type="text" @bind="clienteEquipo" @bind:event="oninput" class="form-control bg-dark border-secondary text-white" placeholder="Ej: Samsung Smart 50'">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-secondary small">¿Qué falla hace?</label>
+                    <textarea @bind="clienteFalla" @bind:event="oninput" class="form-control bg-dark border-secondary text-white" rows="3" placeholder="Ej: No prende, pantalla azul, etc."></textarea>
+                </div>
+
+                <a href="@ObtenerUrlWhatsApp()" target="_blank" @onclick="GuardarConsulta" class="btn btn-success w-100 fw-bold py-2 d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-whatsapp fs-5"></i> CONSULTAR POR WHATSAPP
+                </a>
+
+                @if (!string.IsNullOrEmpty(errorGuardado))
+                {
+                    <p class="text-warning small mt-2 mb-0">@errorGuardado</p>
+                }
+            </div>
+        </div>
+
+        @* PREGUNTAS FRECUENTES *@
+        <div class="col-lg-6">
+            <h3 class="section-title mt-0">Dudas comunes</h3>
+            <div class="accordion shadow-sm" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q1">
+                            <i class="bi bi-currency-dollar text-primary me-2"></i> ¿Tienen costo los presupuestos?
+                        </button>
+                    </h2>
+                    <div id="q1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            No cobramos por darte el presupuesto. El diagnóstico es <strong class="text-white">100% gratuito</strong> para que puedas decidir sin compromiso.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q2">
+                            <i class="bi bi-clock-history text-primary me-2"></i> ¿Cuánto demora una reparación?
+                        </button>
+                    </h2>
+                    <div id="q2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Depende de la falla y stock de repuestos, pero normalmente entregamos en un plazo de <strong class="text-white">48 a 72 horas hábiles</strong>.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q3">
+                            <i class="bi bi-shield-check text-primary me-2"></i> ¿Dan garantía por el trabajo?
+                        </button>
+                    </h2>
+                    <div id="q3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Sí, todas nuestras reparaciones incluyen <strong class="text-white">garantía escrita</strong> (el tiempo depende del tipo de componente reemplazado).
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* --- HORARIOS Y UBICACIÓN --- *@
+    <div class="row g-4 mb-5">
+        <!-- HORARIOS -->
+        <div class="col-md-5">
+            <div class="info-card h-100 text-start p-4" style="border-left: 4px solid #ffc107;">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-clock-history text-warning fs-1 me-3"></i>
+                    <h5 class="mb-0 text-white fw-bold">Horarios de Atención</h5>
+                </div>
+                <p class="mb-1 text-secondary">Lunes a Viernes: <span class="text-white">10:00 - 20:00 hs</span></p>
+                <p class="mb-1 text-secondary">Sábados: <span class="text-white">10:00 - 15:00 hs</span></p>
+                <p class="mb-0 text-danger font-monospace mt-2">Domingos: Cerrado</p>
+            </div>
+        </div>
+
+        <!-- MAPA / DÓNDE ESTAMOS -->
+        <div class="col-md-7">
+            <div class="card h-100 shadow-sm overflow-hidden" style="background-color: #111; border: 1px solid #222;">
+                <div class="ratio ratio-21x9">
+                    <iframe src="@ObtenerUrlMapaEmbed()" title="Ubicación de Dexter" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+                <div class="p-3 d-flex justify-content-between align-items-center">
+                    <span class="text-secondary small"><i class="bi bi-geo-alt-fill text-danger me-1"></i> Av. Pres. Perón 3776, Alejandro Korn</span>
+                    <a href="@ObtenerUrlMapaGps()" target="_blank" rel="noopener" class="btn btn-primary btn-sm fw-bold">
+                        <i class="bi bi-cursor-fill me-1"></i> Ver GPS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="mt-5 py-4 border-top border-secondary text-center text-secondary">
+    <p class="small mb-0">&copy; @DateTime.Now.Year DEXTER - Servicio Técnico Profesional</p>
+</footer>
+
+<!-- Botón Flotante WhatsApp -->
+<a href="@ObtenerUrlWhatsApp()" class="whatsapp-float shadow-lg" target="_blank" title="Contacto por WhatsApp">
+    <i class="bi bi-whatsapp"></i>
+</a>
+
+@code {
+    private string _clienteNombre = "";
+    private string errorNombre = "";
+
+    private string clienteNombre
+    {
+        get => _clienteNombre;
+        set
+        {
+            if (System.Text.RegularExpressions.Regex.IsMatch(value, @"\d"))
+            {
+                errorNombre = "No se permiten números en el nombre y apellido.";
+            }
+            else
+            {
+                errorNombre = "";
+            }
+
+            // Filtra y remueve automáticamente cualquier carácter que no sea letra, espacio o tilde en español
+            _clienteNombre = System.Text.RegularExpressions.Regex.Replace(value, @"[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]", "");
+        }
+    }
+
+    private string clienteEquipo = "";
+    private string clienteFalla = "";
+    private string errorGuardado = "";
+
+    // NÚMERO DE WHATSAPP
+    private string numeroTelefono = "5491127957587";
+
+    // UBICACIÓN
+    private string direccionLocal = "Av. Presidente Perón 3776, Alejandro Korn, Buenos Aires, Argentina";
+
+    private string ObtenerUrlWhatsApp()
+    {
+        string mensaje = "Hola Dexter!";
+
+        if (!string.IsNullOrWhiteSpace(clienteNombre) || !string.IsNullOrWhiteSpace(clienteEquipo) || !string.IsNullOrWhiteSpace(clienteFalla))
+        {
+            mensaje = $"Hola Dexter! Mi nombre es {clienteNombre}. Consulta sobre mi equipo: {clienteEquipo}. Falla: {clienteFalla}";
+        }
+
+        return $"https://wa.me/{numeroTelefono}?text={Uri.EscapeDataString(mensaje)}";
+    }
+
+    private string ObtenerUrlMapaEmbed()
+    {
+        return $"https://maps.google.com/maps?q={Uri.EscapeDataString(direccionLocal)}&z=16&output=embed";
+    }
+
+    private string ObtenerUrlMapaGps()
+    {
+        return $"https://www.google.com/maps/search/?api=1&query={Uri.EscapeDataString(direccionLocal)}";
+    }
+
+    private async Task GuardarConsulta()
+    {
+        errorGuardado = "";
+
+        if (string.IsNullOrWhiteSpace(clienteNombre) &&
+            string.IsNullOrWhiteSpace(clienteEquipo) &&
+            string.IsNullOrWhiteSpace(clienteFalla))
+        {
+            return;
+        }
+
+        try
+        {
+            await using var db = await DbFactory.CreateDbContextAsync();
+            db.Consultas.Add(new Consulta
+            {
+                Nombre = clienteNombre.Trim(),
+                Equipo = clienteEquipo.Trim(),
+                Falla = clienteFalla.Trim(),
+                Fecha = DateTime.Now
+            });
+            await db.SaveChangesAsync();
+        }
+        catch (Exception)
+        {
+            errorGuardado = "No pudimos registrar la consulta, pero igual podés escribirnos por WhatsApp.";
+        }
+    }
+}

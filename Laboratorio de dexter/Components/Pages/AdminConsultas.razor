@@ -1,0 +1,75 @@
+﻿@* Mínimo 6 componentes Razor reutilizables
+ Cumplido:al menos 8 componentes en la carpeta Pages
+ (AdminConsultas, CelularesService, 
+ ConsolasService, Counter, Error, Home,
+ NotebooksService, TvService, Weather). *@
+
+
+@*  Routing con parámetros y navegación	
+Cumplido: Uso de directivas @page "/admin/consultas" en tus componentes *@
+
+
+
+@page "/admin/consultas"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<AppDbContext> DbFactory
+
+<PageTitle>Consultas recibidas | Dexter</PageTitle>
+
+<div class="container mt-4 pb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold mb-0">Consultas recibidas</h2>
+        <button class="btn btn-primary btn-sm" @onclick="Cargar">Actualizar</button>
+    </div>
+
+    @if (consultas == null)
+    {
+        <p class="text-secondary">Cargando...</p>
+    }
+    else if (consultas.Count == 0)
+    {
+        <p class="text-secondary">Todavía no hay consultas.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-dark table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Nombre</th>
+                        <th>Equipo</th>
+                        <th>Falla</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in consultas)
+                    {
+                        <tr>
+                            <td class="text-nowrap">@c.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@c.Nombre</td>
+                            <td>@c.Equipo</td>
+                            <td>@c.Falla</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+    private List<Consulta>? consultas;
+
+    protected override async Task OnInitializedAsync() => await Cargar();
+
+    private async Task Cargar()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        consultas = await db.Consultas
+            .OrderByDescending(c => c.Fecha)
+            .ToListAsync();
+    }
+}
+
